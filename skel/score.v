@@ -18,7 +18,7 @@ module score #(parameter xloc=40,
    reg [3:0]	digit;
    wire [11:0]	score_bcd;
    
-   (*rom_style = "block" *) reg [6:0] chr_pix;
+   (*rom_style = "block" *) reg [7:0] chr_pix;
    
    always @(posedge clk)
      begin
