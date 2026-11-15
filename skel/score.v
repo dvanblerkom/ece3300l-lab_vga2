@@ -22,7 +22,7 @@ module score #(parameter xloc=40,
    
    always @(posedge clk)
      begin
-	case ({1'b0,digit,row})  // each digit is 8 rows, 8 bits each row
+	case ({1'b0,digit,row})
 	  8'h00: chr_pix <= 8'b00000000;
 	  8'h01: chr_pix <= 8'b00111100;
 	  8'h02: chr_pix <= 8'b01000010;
@@ -40,18 +40,23 @@ module score #(parameter xloc=40,
 	  8'h0e: chr_pix <= 8'b00010000;
 	  8'h0f: chr_pix <= 8'b01111100;
 	  
-	  // fill in the values for the rest of the numbers
-	  
-	endcase // case ({digit,row})
-     end
-	  
-   assign draw_score_100 = ;  // when we are in the 100's digit region, use chr_pix[?] to draw the pixels
-   
-   assign draw_score_10 = ;  // when we are in the 10's digit region, use chr_pix[?] to draw the pixels
-		       
-   assign draw_score_1 = ; // when we are in the 1's digit region, use chr_pix[?] to draw the pixels
+	  // file in the rest of the numbers...
 
-   assign draw_score = draw_score_100 | draw_score_10 | draw_score_1;  // draw all of the score pixels
+	endcase // case ({digit,row})p
+     end
+
+	 // fill in the logic below:
+	 // determine when you are in the correct digit region, and use chr_pix[?] to draw the pixels.
+     // for example, if we are pointing at the first column of the hundred's digit,
+	 // then draw_score_100 = chr_pix[7]  (the left most bit); the second column is chr_pix[6], etc...
+
+   assign draw_score_100 = ; // when to draw the 100's digit pixels
+
+   assign draw_score_10 = ; // when to draw the 10's digit pixels
+
+   assign draw_score_1 = ; // when to draw the 1's digit pixels
+
+   assign draw_score = draw_score_100 | draw_score_10 | draw_score_1;
 
    doubdab_8bits udd (.b_in (score), .bcd_out (score_bcd));
 
@@ -64,16 +69,15 @@ module score #(parameter xloc=40,
 	   row <= 0;
 	end else if (pixpulse) begin  // only make changes when pixpulse is high
 	      if (vcount >= yloc-7 && vcount <= yloc) begin
-	      // update row and digit as we scan through the region that has the score
-		 row <= 7 - (yloc - vcount); 
+		 row <= 7 - (yloc - vcount);
 		 if (hcount == xloc)
-		   digit <= score_bcd[11:8]; // when we reach xloc, set the digit to the 100's place
+		   digit <= score_bcd[11:8];
 		 else if (hcount == xloc + 8)
-		   digit <= score_bcd[7:4]; // when we reach xloc+8, set the digit to the 10's place
+		   digit <= score_bcd[7:4];
 		 else if (hcount == xloc + 16)
-		   digit <= score_bcd[3:0]; // when we reach xloc+16, set the digit to the 1's place
+		   digit <= score_bcd[3:0];
 	      end
 	end
      end	      
    
-endmodule // score
+endmodule // ball
